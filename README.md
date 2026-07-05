@@ -7,6 +7,32 @@ Uma extensão para guiar devs, QAs e pessoas menos experientes na criação de i
 
 O foco é simples: escolher o serviço, preencher as credenciais em linguagem direta e receber a configuração pronta para usar em clientes como Claude Desktop, Codex e outros clientes compatíveis com MCP.
 
+## Comece aqui (passo a passo para leigos)
+
+Se voce instalou a extensao e "nao apareceu nada", isso e normal.
+Ela nao abre como aplicativo separado automaticamente: voce precisa chamar o comando dela no VS Code.
+
+1. Abra o VS Code.
+2. Pressione `Ctrl + Shift + P` (ou `F1`) para abrir o Command Palette.
+3. Digite `MCP Easy Setup`.
+4. Clique no comando `MCP Easy Setup`.
+5. Escolha os servicos que quer configurar.
+6. Escolha o cliente de IA de destino.
+7. Preencha os campos (URL, token, usuario, senha, etc.).
+8. No final, copie o JSON gerado ou salve no workspace.
+
+Arquivo gerado quando voce escolhe salvar:
+
+- `.vscode/mcp.easy-setup.json`
+
+## Nao apareceu nada? (solucao rapida)
+
+1. Confirme se a extensao esta instalada e habilitada no VS Code.
+2. Rode novamente `Ctrl + Shift + P` e procure por `MCP Easy Setup`.
+3. Se o comando nao aparecer, recarregue a janela com `Developer: Reload Window`.
+4. Se ainda nao aparecer, feche e abra o VS Code e teste de novo.
+5. Verifique se voce esta no VS Code (desktop) ou ambiente compativel com extensoes.
+
 ## O que ela resolve
 
 - Evita setup manual de JSON.
