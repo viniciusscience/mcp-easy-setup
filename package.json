@@ -3,7 +3,12 @@
   "displayName": "MCP Easy Setup",
   "description": "Extensão guiada para criar integrações MCP de serviços internos sem lidar com JSON manual ou configuração complicada.",
   "version": "0.0.1",
-  "publisher": "vinicius",
+  "publisher": "Joseviniciusdasilvadesouzadesouza",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/viniciusscience/mcp-easy-setup.git"
+  },
+  "license": "MIT",
   "icon": "media/icon.png",
   "engines": {
     "vscode": "^1.125.0"

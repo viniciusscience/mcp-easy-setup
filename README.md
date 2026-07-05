@@ -1,8 +1,8 @@
 # MCP Easy Setup
 
-![VS Code Marketplace](https://img.shields.io/badge/VS%20Code-Extension-007ACC?style=for-the-badge&logo=visualstudiocode&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-Ready-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
-![MCP](https://img.shields.io/badge/MCP-Ready-111827?style=for-the-badge)
+![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/Joseviniciusdasilvadesouzadesouza.mcp-easy-setup)
+![Visual Studio Marketplace Installs](https://img.shields.io/visual-studio-marketplace/i/Joseviniciusdasilvadesouzadesouza.mcp-easy-setup)
+![Visual Studio Marketplace Rating](https://img.shields.io/visual-studio-marketplace/r/Joseviniciusdasilvadesouzadesouza.mcp-easy-setup)
 
 Uma extensão para guiar devs, QAs e pessoas menos experientes na criação de integrações MCP sem precisar decorar JSON, comandos ou variáveis de ambiente.
 
