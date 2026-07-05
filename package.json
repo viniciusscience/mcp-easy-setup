@@ -2,7 +2,7 @@
   "name": "mcp-easy-setup",
   "displayName": "MCP Easy Setup",
   "description": "Extensão guiada para criar integrações MCP de serviços internos sem lidar com JSON manual ou configuração complicada.",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "publisher": "Joseviniciusdasilvadesouzadesouza",
   "repository": {
     "type": "git",
