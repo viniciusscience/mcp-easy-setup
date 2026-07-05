@@ -1,8 +1,7 @@
 # MCP Easy Setup
-
-[![Visual Studio Marketplace Version](https://vsmarketplacebadge.apphb.com/version-short/Joseviniciusdasilvadesouzadesouza.mcp-easy-setup.svg)](https://marketplace.visualstudio.com/items?itemName=Joseviniciusdasilvadesouzadesouza.mcp-easy-setup)
-[![Visual Studio Marketplace Installs](https://vsmarketplacebadge.apphb.com/installs-short/Joseviniciusdasilvadesouzadesouza.mcp-easy-setup.svg)](https://marketplace.visualstudio.com/items?itemName=Joseviniciusdasilvadesouzadesouza.mcp-easy-setup)
-[![Visual Studio Marketplace Rating](https://vsmarketplacebadge.apphb.com/rating-short/Joseviniciusdasilvadesouzadesouza.mcp-easy-setup.svg)](https://marketplace.visualstudio.com/items?itemName=Joseviniciusdasilvadesouzadesouza.mcp-easy-setup)
+![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/Joseviniciusdasilvadesouzadesouza.mcp-easy-setup)
+![Visual Studio Marketplace Installs](https://img.shields.io/visual-studio-marketplace/i/Joseviniciusdasilvadesouzadesouza.mcp-easy-setup)
+![Visual Studio Marketplace Rating](https://img.shields.io/visual-studio-marketplace/r/Joseviniciusdasilvadesouzadesouza.mcp-easy-setup)
 
 Uma extensão para guiar devs, QAs e pessoas menos experientes na criação de integrações MCP sem precisar decorar JSON, comandos ou variáveis de ambiente.
 
