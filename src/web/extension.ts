@@ -108,6 +108,46 @@ async function runMcpWizard(context: vscode.ExtensionContext) {
 		preserveFocus: true
 	});
 
+	if (selectedClient.client.id === 'vscode') {
+		const autoApply = await vscode.window.showInformationMessage(
+			'Configuração pronta para VS Code. Deseja aplicar automaticamente em .vscode/mcp.json?',
+			'Aplicar automaticamente',
+			'Copiar JSON'
+		);
+
+		if (autoApply === 'Aplicar automaticamente') {
+			await saveMergedConfigToWorkspace(generated.json, '.vscode/mcp.json', 'servers');
+			context.globalState.update('mcpEasySetup.lastClient', selectedClient.client.id);
+			return;
+		}
+
+		if (autoApply === 'Copiar JSON') {
+			await vscode.env.clipboard.writeText(generated.json);
+			context.globalState.update('mcpEasySetup.lastClient', selectedClient.client.id);
+			return;
+		}
+	}
+
+	if (selectedClient.client.id === 'claude-code') {
+		const autoApply = await vscode.window.showInformationMessage(
+			'Configuração pronta para Claude Code. Deseja aplicar automaticamente em .mcp.json?',
+			'Aplicar automaticamente',
+			'Copiar JSON'
+		);
+
+		if (autoApply === 'Aplicar automaticamente') {
+			await saveMergedConfigToWorkspace(generated.json, '.mcp.json', 'mcpServers');
+			context.globalState.update('mcpEasySetup.lastClient', selectedClient.client.id);
+			return;
+		}
+
+		if (autoApply === 'Copiar JSON') {
+			await vscode.env.clipboard.writeText(generated.json);
+			context.globalState.update('mcpEasySetup.lastClient', selectedClient.client.id);
+			return;
+		}
+	}
+
 	const action = await vscode.window.showInformationMessage(
 		'Integrações MCP geradas. Quer copiar ou salvar no workspace?',
 		'Copiar JSON',
@@ -182,4 +222,52 @@ async function saveGeneratedConfigToWorkspace(json: string) {
 	const document = await vscode.workspace.openTextDocument(targetFile);
 	await vscode.window.showTextDocument(document, { preview: false });
 	await vscode.window.showInformationMessage('Arquivo salvo em .vscode/mcp.easy-setup.json');
+}
+
+async function saveMergedConfigToWorkspace(
+	json: string,
+	relativeFilePath: string,
+	rootKey: 'mcpServers' | 'servers'
+) {
+	const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+
+	if (!workspaceFolder) {
+		await vscode.window.showWarningMessage('Abra uma pasta no VS Code para que eu possa salvar o arquivo gerado.');
+		return;
+	}
+
+	const targetFile = vscode.Uri.joinPath(workspaceFolder.uri, ...relativeFilePath.split('/'));
+	const parentSegments = relativeFilePath.split('/').slice(0, -1);
+
+	if (parentSegments.length > 0) {
+		const targetFolder = vscode.Uri.joinPath(workspaceFolder.uri, ...parentSegments);
+		await vscode.workspace.fs.createDirectory(targetFolder);
+	}
+
+	const generatedConfig = JSON.parse(json) as Record<string, unknown>;
+	const generatedServers = ((generatedConfig[rootKey] as Record<string, unknown>) ?? {}) as Record<string, unknown>;
+
+	let existingConfig: Record<string, unknown> = {};
+
+	try {
+		const existingBytes = await vscode.workspace.fs.readFile(targetFile);
+		existingConfig = JSON.parse(new TextDecoder().decode(existingBytes)) as Record<string, unknown>;
+	} catch {
+		existingConfig = {};
+	}
+
+	const existingServers = ((existingConfig[rootKey] as Record<string, unknown>) ?? {}) as Record<string, unknown>;
+	const mergedConfig = {
+		...existingConfig,
+		[rootKey]: {
+			...existingServers,
+			...generatedServers
+		}
+	};
+
+	await vscode.workspace.fs.writeFile(targetFile, new TextEncoder().encode(`${JSON.stringify(mergedConfig, null, 2)}\n`));
+
+	const document = await vscode.workspace.openTextDocument(targetFile);
+	await vscode.window.showTextDocument(document, { preview: false });
+	await vscode.window.showInformationMessage(`Configuração aplicada em ${relativeFilePath}`);
 }

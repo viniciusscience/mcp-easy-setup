@@ -1,4 +1,4 @@
-export type ClientId = 'claude-desktop' | 'codex' | 'generic';
+export type ClientId = 'claude-desktop' | 'claude-code' | 'vscode' | 'codex' | 'generic';
 
 export interface ClientProfile {
 	id: ClientId;
@@ -40,6 +40,18 @@ export interface GeneratedMcpConfig {
 }
 
 export const clientProfiles: ClientProfile[] = [
+	{
+		id: 'vscode',
+		label: 'VS Code (MCP nativo)',
+		description: 'Aplica no arquivo .vscode/mcp.json para uso direto no Chat do VS Code.',
+		nextStep: 'Se quiser, aplique automaticamente no arquivo .vscode/mcp.json e use no Chat do VS Code.'
+	},
+	{
+		id: 'claude-code',
+		label: 'Claude Code (no VS Code)',
+		description: 'Prepara configuracao para .mcp.json, usada pelo Claude Code no projeto.',
+		nextStep: 'Se quiser, aplique automaticamente no arquivo .mcp.json para uso no Claude Code.'
+	},
 	{
 		id: 'claude-desktop',
 		label: 'Claude Desktop',
