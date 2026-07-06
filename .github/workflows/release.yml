@@ -24,6 +24,7 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     environment:
       name: marketplace
 
@@ -50,7 +51,7 @@ jobs:
         run: npm run lint
 
       - name: Test
-        run: npm test
+        run: xvfb-run -a npm test
 
       - name: Bump version
         id: version
