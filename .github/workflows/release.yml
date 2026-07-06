@@ -1,0 +1,112 @@
+name: Release VS Code Extension
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_bump:
+        description: Version bump
+        required: true
+        default: patch
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+      publish_marketplace:
+        description: Publish to VS Marketplace
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    environment:
+      name: marketplace
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check types
+        run: npm run check-types
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm test
+
+      - name: Bump version
+        id: version
+        run: |
+          npm version "${{ inputs.version_bump }}" --no-git-tag-version
+          NEW_VERSION=$(node -p "require('./package.json').version")
+          echo "new_version=${NEW_VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Update changelog
+        env:
+          NEW_VERSION: ${{ steps.version.outputs.new_version }}
+        run: |
+          export TODAY=$(date +%F)
+          export LAST_RELEASE_COMMIT=$(git log --grep='^chore: release v' --format='%H' -n 1 | tail -n 1 || true)
+          node <<'NODE'
+          const fs = require('fs');
+          const { execSync } = require('child_process');
+
+          const version = process.env.NEW_VERSION;
+          const today = process.env.TODAY;
+          const lastReleaseCommit = process.env.LAST_RELEASE_COMMIT;
+          const range = lastReleaseCommit ? `${lastReleaseCommit}..HEAD` : 'HEAD';
+          const rawLog = execSync(`git log --no-merges --format=%s ${range}`, { encoding: 'utf8' }).trim();
+          const items = rawLog
+            .split('\n')
+            .map((line) => line.trim())
+            .filter(Boolean)
+            .filter((line) => !line.startsWith('chore: release v'))
+            .filter((line) => !line.startsWith('chore: bump version to v'));
+
+          if (items.length === 0) {
+            items.push('Release manual da nova versão.');
+          }
+
+          const section = `## [${version}] - ${today}\n\n${items.map((item) => `- ${item}`).join('\n')}\n\n`;
+          const file = fs.readFileSync('CHANGELOG.md', 'utf8');
+          const marker = '## [Unreleased]\n\n';
+
+          if (!file.includes(marker)) {
+            throw new Error('Unreleased marker not found in CHANGELOG.md');
+          }
+
+          fs.writeFileSync('CHANGELOG.md', file.replace(marker, `${marker}${section}`));
+          NODE
+
+      - name: Commit and tag release
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json package-lock.json CHANGELOG.md
+          git commit -m "chore: release v${{ steps.version.outputs.new_version }} [skip ci]"
+          git tag "v${{ steps.version.outputs.new_version }}"
+          git push origin HEAD:main --follow-tags
+
+      - name: Publish to VS Marketplace
+        if: inputs.publish_marketplace
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+        run: npx @vscode/vsce publish --pat "$VSCE_PAT"
