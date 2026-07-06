@@ -2,29 +2,4 @@
 
 set -eu
 
-remote_name="${1:-origin}"
-current_branch="$(git symbolic-ref --quiet --short HEAD || true)"
-
-if [ -z "$current_branch" ]; then
-	echo "pre-push: branch atual nao identificada; pulando pull automatico."
-	exit 0
-fi
-
-upstream="$(git rev-parse --abbrev-ref --symbolic-full-name "@{u}" 2>/dev/null || true)"
-
-if [ -z "$upstream" ]; then
-	echo "pre-push: branch '$current_branch' ainda nao tem upstream; pulando pull automatico."
-	exit 0
-fi
-
-upstream_remote="$(git config "branch.$current_branch.remote" || true)"
-upstream_merge_ref="$(git config "branch.$current_branch.merge" || true)"
-upstream_branch="${upstream_merge_ref#refs/heads/}"
-
-if [ -z "$upstream_remote" ] || [ -z "$upstream_branch" ] || [ "$upstream_branch" = "$upstream_merge_ref" ]; then
-	upstream_remote="$remote_name"
-	upstream_branch="$current_branch"
-fi
-
-echo "pre-push: atualizando '$current_branch' com '$upstream' antes do push..."
-git pull --rebase --autostash "$upstream_remote" "$upstream_branch"
+echo "pre-push: use ./deploy \"mensagem\" para sincronizar antes de commitar e enviar."

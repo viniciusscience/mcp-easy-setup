@@ -2,13 +2,27 @@
 
 set -eu
 
-commit_message="${1:-}"
+commit_message="$*"
+remote_name="origin"
+branch_name="main"
 
 if [ -z "$commit_message" ]; then
 	echo "Uso: ./deploy \"mensagem do commit\""
 	exit 1
 fi
 
+echo "deploy: atualizando '$branch_name' antes do commit..."
+git pull --rebase --autostash "$remote_name" "$branch_name"
+
 git add .
-git commit -m "$commit_message"
-git push origin main
+
+if git diff --cached --quiet; then
+	echo "deploy: nenhuma alteracao para commitar."
+else
+	git commit -m "$commit_message"
+fi
+
+echo "deploy: atualizando '$branch_name' antes do push..."
+git pull --rebase --autostash "$remote_name" "$branch_name"
+
+git push "$remote_name" "$branch_name"
