@@ -13,6 +13,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - Added GitHub Actions release flow with automatic patch bumps and Marketplace publishing.
 - Added review protection for non-owner releases using a protected GitHub Environment.
 - Added automatic changelog generation for each release version.
+- Replaced placeholder MCP packages with verified npm packages for Docker, GitLab, and YouTrack.
+- Removed unsupported OpenSearch from automatic generation so the wizard only emits packages that exist.
 - Updated README guidance and version badge to match the published release.
 
 ## [0.0.3] - 2026-07-05

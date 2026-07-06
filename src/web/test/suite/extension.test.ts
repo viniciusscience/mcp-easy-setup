@@ -4,6 +4,7 @@ import {
 	clientProfiles,
 	createGeneratedMcpConfig,
 	findServiceTemplate,
+	isServiceReadyForAutomaticGeneration,
 	serviceCatalog,
 	type SelectedServiceResult
 } from '../../mcpCatalog';
@@ -20,11 +21,6 @@ const sampleValues: Record<string, Record<string, string>> = {
 		dockerHost: 'unix:///var/run/docker.sock',
 		dockerContext: ''
 	},
-	opensearch: {
-		url: 'https://opensearch.empresa.local:9200',
-		username: 'search_user',
-		password: 'search-secret'
-	},
 	gitlab: {
 		url: 'https://gitlab.empresa.local',
 		token: 'glpat-123'
@@ -37,17 +33,18 @@ const sampleValues: Record<string, Record<string, string>> = {
 
 suite('Web Extension Test Suite', () => {
 	test('catálogo lista os serviços esperados', () => {
-		assert.strictEqual(serviceCatalog.length, 5);
+		assert.strictEqual(serviceCatalog.length, 4);
 		assert.deepStrictEqual(
 			serviceCatalog.map((service) => service.id),
-			['postgres', 'docker', 'opensearch', 'gitlab', 'youtrack']
+			['postgres', 'docker', 'gitlab', 'youtrack']
 		);
 		assert.deepStrictEqual(
 			serviceCatalog.map((service) => service.serverName),
-			['postgres', 'docker', 'opensearch', 'gitlab', 'youtrack']
+			['postgres', 'docker', 'gitlab', 'youtrack']
 		);
 		assert.ok(serviceCatalog.every((service) => service.fields.length > 0));
 		assert.ok(serviceCatalog.every((service) => service.notes.length > 0));
+		assert.ok(serviceCatalog.every((service) => isServiceReadyForAutomaticGeneration(service, sampleValues[service.id])));
 		assert.ok(clientProfiles.every((client) => client.label.length > 0 && client.nextStep.length > 0));
 	});
 
@@ -85,6 +82,9 @@ suite('Web Extension Test Suite', () => {
 			YOUTRACK_URL: 'https://youtrack.empresa.local',
 			YOUTRACK_TOKEN: 'yt-123'
 		});
+		assert.strictEqual(parsed.mcpServers.docker.args[1], 'docker-mcp-server');
+		assert.strictEqual(parsed.mcpServers.gitlab.args[1], '@modelcontextprotocol/server-gitlab');
+		assert.strictEqual(parsed.mcpServers.youtrack.args[1], '@habby/server-youtrack');
 	});
 
 	test('resume integrações e localiza templates', () => {
@@ -155,5 +155,24 @@ suite('Web Extension Test Suite', () => {
 		const parsed = JSON.parse(generated.json) as { mcpServers: { docker: { env?: Record<string, string> } } };
 
 		assert.deepStrictEqual(parsed.mcpServers.docker.env, { DOCKER_HOST: 'unix:///var/run/docker.sock' });
+	});
+
+	test('nao gera JSON automatico para pacote MCP nao verificado', () => {
+		const generated = createGeneratedMcpConfig(clientProfiles[0], [
+			{
+				service: {
+					...findServiceTemplate('docker')!,
+					id: 'docker-interno',
+					serverName: 'docker-interno',
+					verifiedNpmPackage: 'docker-mcp-server',
+					args: () => ['-y', '@company/mcp-docker']
+				},
+				values: sampleValues.docker
+			}
+		]);
+
+		const parsed = JSON.parse(generated.json) as { mcpServers: Record<string, unknown> };
+
+		assert.deepStrictEqual(parsed.mcpServers, {});
 	});
 });

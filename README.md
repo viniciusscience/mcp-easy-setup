@@ -85,9 +85,10 @@ flowchart TD
 | --- | --- | --- |
 | PostgreSQL | Acesso a banco e inspeção de dados | host, porta, banco, usuário e senha |
 | Docker | Integração com ambiente local e recursos de containers | host e contexto |
-| OpenSearch | Consultas e análise de índices | URL, usuário e senha |
 | GitLab | Repositórios, MRs, pipelines e issues | URL e token |
 | YouTrack | Tickets, boards e projetos | URL e token |
+
+> A extensão só monta JSON com pacotes MCP que foram verificados como existentes no registry. Se um serviço não tiver pacote público confiável, ele fica fora da geração automática para não quebrar a instalação.
 
 ## Exemplo de saída
 
@@ -111,7 +112,7 @@ A extensão gera a estrutura MCP padrão no formato `mcpServers`.
   "mcpServers": {
     "gitlab": {
       "command": "npx",
-      "args": ["-y", "@company/mcp-gitlab"],
+      "args": ["-y", "@modelcontextprotocol/server-gitlab"],
       "env": {
         "GITLAB_URL": "https://gitlab.sua-empresa.local",
         "GITLAB_TOKEN": "<TOKEN>"
