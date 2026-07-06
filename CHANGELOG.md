@@ -6,6 +6,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [0.0.9] - 2026-07-06
+
+- mcp angular
+
 ## [0.0.8] - 2026-07-06
 
 - ajustes
