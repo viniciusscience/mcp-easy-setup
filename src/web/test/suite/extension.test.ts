@@ -21,6 +21,7 @@ const sampleValues: Record<string, Record<string, string>> = {
 		dockerHost: 'unix:///var/run/docker.sock',
 		dockerContext: ''
 	},
+	angular: {},
 	gitlab: {
 		url: 'https://gitlab.empresa.local',
 		token: 'glpat-123'
@@ -33,16 +34,15 @@ const sampleValues: Record<string, Record<string, string>> = {
 
 suite('Web Extension Test Suite', () => {
 	test('catálogo lista os serviços esperados', () => {
-		assert.strictEqual(serviceCatalog.length, 4);
+		assert.strictEqual(serviceCatalog.length, 5);
 		assert.deepStrictEqual(
 			serviceCatalog.map((service) => service.id),
-			['postgres', 'docker', 'gitlab', 'youtrack']
+			['postgres', 'docker', 'angular', 'gitlab', 'youtrack']
 		);
 		assert.deepStrictEqual(
 			serviceCatalog.map((service) => service.serverName),
-			['postgres', 'docker', 'gitlab', 'youtrack']
+			['postgres', 'docker', 'angular-docs', 'gitlab', 'youtrack']
 		);
-		assert.ok(serviceCatalog.every((service) => service.fields.length > 0));
 		assert.ok(serviceCatalog.every((service) => service.notes.length > 0));
 		assert.ok(serviceCatalog.every((service) => isServiceReadyForAutomaticGeneration(service, sampleValues[service.id])));
 		assert.ok(clientProfiles.every((client) => client.label.length > 0 && client.nextStep.length > 0));
@@ -83,6 +83,7 @@ suite('Web Extension Test Suite', () => {
 			YOUTRACK_TOKEN: 'yt-123'
 		});
 		assert.strictEqual(parsed.mcpServers.docker.args[1], 'docker-mcp-server');
+		assert.strictEqual(parsed.mcpServers['angular-docs'].args[1], 'angular-mcp-server');
 		assert.strictEqual(parsed.mcpServers.gitlab.args[1], '@modelcontextprotocol/server-gitlab');
 		assert.strictEqual(parsed.mcpServers.youtrack.args[1], '@habby/server-youtrack');
 	});
@@ -105,6 +106,17 @@ suite('Web Extension Test Suite', () => {
 		assert.strictEqual(findServiceTemplate('nao-existe'), undefined);
 	});
 
+
+	test('resume integracoes sem credenciais', () => {
+		const summary = buildServerSummary([
+			{
+				service: findServiceTemplate('angular')!,
+				values: {}
+			}
+		]);
+
+		assert.match(summary, /Angular Docs: sem credenciais necess/);
+	});
 	test('mascara valores vazios e campos sensíveis no resumo', () => {
 		const summary = buildServerSummary([
 			{

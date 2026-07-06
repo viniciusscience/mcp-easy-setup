@@ -1,3 +1,4 @@
+import { AngularMcpIntegration } from './mcpIntegrations/angular';
 import { DockerMcpIntegration } from './mcpIntegrations/docker';
 import { GitLabMcpIntegration } from './mcpIntegrations/gitlab';
 import { PostgresMcpIntegration } from './mcpIntegrations/postgres';
@@ -63,6 +64,7 @@ export const clientProfiles: ClientProfile[] = [
 export const serviceCatalog: McpIntegration[] = [
 	new PostgresMcpIntegration(),
 	new DockerMcpIntegration(),
+	new AngularMcpIntegration(),
 	new GitLabMcpIntegration(),
 	new YouTrackMcpIntegration()
 ];
@@ -108,6 +110,10 @@ export function createGeneratedMcpConfig(client: ClientProfile, selectedServices
 export function buildServerSummary(selectedServices: SelectedServiceResult[]): string {
 	return selectedServices
 		.map(({ service, values }) => {
+			if (service.fields.length === 0) {
+				return `- ${service.label}: sem credenciais necessárias`;
+			}
+
 			const labels = service.fields
 				.map((field) => `${field.label}: ${maskValue(field, values[field.key] ?? '')}`)
 				.join(' | ');
