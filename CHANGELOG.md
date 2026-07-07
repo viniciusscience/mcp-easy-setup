@@ -6,6 +6,26 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-07-07
+
+- mcp angular
+- mcp angular
+- mcp angular
+- mcp angular
+- ajustes
+- ajustes
+- refatoração
+- ajustes
+- permissões repo
+- github action
+- ajustes
+- update readme
+- ajuste badges
+- badges
+- ajustes bagde
+- ajuste badge
+- initial commit
+
 ## [0.0.9] - 2026-07-06
 
 - mcp angular
